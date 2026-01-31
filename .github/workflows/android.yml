@@ -1,4 +1,4 @@
-name: Android Build (APK + AAB)
+name: Android Build (APK + AAB) - No Wrapper Jar
 
 on:
   workflow_dispatch:
@@ -19,6 +19,7 @@ jobs:
           distribution: temurin
           java-version: "17"
 
+      # ✅ Không dùng ./gradlew (vì thiếu gradle-wrapper.jar)
       - name: Install Gradle 8.2
         run: |
           set -e
@@ -28,13 +29,16 @@ jobs:
           echo "$PWD/gradle-${GRADLE_VERSION}/bin" >> $GITHUB_PATH
           gradle -v
 
-      - name: Build Release
+      - name: Make sure gradlew is executable (optional)
+        run: chmod +x gradlew || true
+
+      - name: Build Release APK + AAB
         run: |
           set -e
           gradle --no-daemon clean
           gradle --no-daemon :app:assembleRelease :app:bundleRelease
 
-      - name: Upload APK/AAB
+      - name: Upload APK/AAB artifacts
         uses: actions/upload-artifact@v4
         with:
           name: app-release
