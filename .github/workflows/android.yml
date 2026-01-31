@@ -3,7 +3,7 @@ name: Android Build (APK + AAB) - No Wrapper Jar
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -19,7 +19,20 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      # ✅ Không dùng ./gradlew (vì thiếu gradle-wrapper.jar)
+      # ✅ Setup Android SDK + accept licenses
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: |
+          set -e
+          yes | sdkmanager --licenses
+          sdkmanager --install \
+            "platform-tools" \
+            "platforms;android-34" \
+            "build-tools;34.0.0"
+
+      # ✅ Install Gradle (không cần gradle-wrapper.jar)
       - name: Install Gradle 8.2
         run: |
           set -e
@@ -28,9 +41,6 @@ jobs:
           unzip -q gradle.zip
           echo "$PWD/gradle-${GRADLE_VERSION}/bin" >> $GITHUB_PATH
           gradle -v
-
-      - name: Make sure gradlew is executable (optional)
-        run: chmod +x gradlew || true
 
       - name: Build Release APK + AAB
         run: |
