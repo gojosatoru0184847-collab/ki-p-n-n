@@ -26,7 +26,34 @@ public class MainActivity extends AppCompatActivity {
         adManager.load(REWARDED_AD_UNIT_ID);
 
         webView = findViewById(R.id.web);
-        WebViewFactory.create(webView);
+
+        WebView.setWebContentsDebuggingEnabled(true);
+
+        webView.setLayerType(WebView.LAYER_TYPE_HARDWARE, null);
+
+        WebSettings s = webView.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setDatabaseEnabled(true);
+
+        s.setAllowFileAccess(true);
+        s.setAllowContentAccess(true);
+        s.setAllowFileAccessFromFileURLs(true);
+        s.setAllowUniversalAccessFromFileURLs(true);
+
+        s.setMediaPlaybackRequiresUserGesture(false);
+        s.setUseWideViewPort(true);
+        s.setLoadWithOverviewMode(true);
+
+if (android.os.Build.VERSION.SDK_INT >= 21) {
+    s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+}
+
+webView.setWebChromeClient(new android.webkit.WebChromeClient());
+webView.setWebViewClient(new android.webkit.WebViewClient());
+
+webView.loadUrl("file:///android_asset/index.html");
+
 
         webView.addJavascriptInterface(new JsBridge(() -> runOnUiThread(this::showRewardAd)), "Android");
 
