@@ -1,5 +1,6 @@
 android {
     namespace "com.adr.zombie"
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.adr.zombie"
@@ -7,5 +8,14 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0"
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+        }
+        release {
+            minifyEnabled false
+        }
     }
 }
