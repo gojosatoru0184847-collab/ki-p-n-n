@@ -1,4 +1,4 @@
-name: Android Build (APK + AAB) - No Wrapper Jar
+name: Android Build (APK + AAB) - Auto Fix (No Wrapper Jar)
 
 on:
   workflow_dispatch:
@@ -19,11 +19,11 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      # ✅ Setup Android SDK + accept licenses
+      # Android SDK setup
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android SDK packages
+      - name: Install Android SDK packages + accept licenses
         run: |
           set -e
           yes | sdkmanager --licenses
@@ -32,21 +32,46 @@ jobs:
             "platforms;android-34" \
             "build-tools;34.0.0"
 
-      # ✅ Install Gradle (không cần gradle-wrapper.jar)
-      - name: Install Gradle 8.2
+      - name: Build (try Gradle 8.2, fallback 7.6.4)
+        shell: bash
         run: |
-          set -e
-          GRADLE_VERSION=8.2
-          curl -L -o gradle.zip https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
-          unzip -q gradle.zip
-          echo "$PWD/gradle-${GRADLE_VERSION}/bin" >> $GITHUB_PATH
-          gradle -v
+          set +e
 
-      - name: Build Release APK + AAB
-        run: |
-          set -e
-          gradle --no-daemon clean
-          gradle --no-daemon :app:assembleRelease :app:bundleRelease
+          build_with_gradle () {
+            local GV="$1"
+            echo "=============================="
+            echo "👉 Trying Gradle $GV"
+            echo "=============================="
+
+            rm -rf "gradle-$GV" gradle.zip
+
+            curl -L -o gradle.zip "https://services.gradle.org/distributions/gradle-${GV}-bin.zip"
+            unzip -q gradle.zip
+
+            export PATH="$PWD/gradle-${GV}/bin:$PATH"
+            gradle -v
+
+            # --stacktrace để thấy lỗi thật sự trong log
+            gradle --no-daemon --stacktrace --info clean
+            gradle --no-daemon --stacktrace --info :app:assembleRelease :app:bundleRelease
+            return $?
+          }
+
+          build_with_gradle "8.2"
+          CODE=$?
+
+          if [ $CODE -ne 0 ]; then
+            echo "❌ Gradle 8.2 failed -> fallback to 7.6.4"
+            build_with_gradle "7.6.4"
+            CODE=$?
+          fi
+
+          if [ $CODE -ne 0 ]; then
+            echo "❌ Both Gradle versions failed."
+            exit 1
+          fi
+
+          echo "✅ Build success."
 
       - name: Upload APK/AAB artifacts
         uses: actions/upload-artifact@v4
