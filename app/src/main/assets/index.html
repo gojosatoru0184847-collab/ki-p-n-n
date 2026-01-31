@@ -1,32 +1,38 @@
 <!doctype html>
 <html lang="vi">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Zombie Game</title>
-<style>
-html,body{margin:0;background:#000;height:100%;overflow:hidden}
-#wrap{position:fixed;inset:0}
-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
-#ui{pointer-events:none}
-#adBtn{position:fixed;top:16px;right:16px;z-index:9;padding:10px 12px;border:0;border-radius:10px;
-  background:#ffcc66;color:#111;font-weight:700}
-#gfxBtn{position:fixed;top:16px;left:16px;z-index:9;padding:10px 12px;border:0;border-radius:10px;
-  background:#7c7cff;color:#fff;font-weight:700}
-#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9;
-  padding:10px 14px;border-radius:999px;background:rgba(0,0,0,.6);color:#fff;
-  font:600 13px system-ui, -apple-system, Segoe UI, Roboto, Arial;opacity:0;transition:.2s}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover" />
+  <title>Game</title>
+  <style>
+    html,body{
+      margin:0; width:100%; height:100%;
+      background:#000; overflow:hidden;
+      touch-action:none;
+    }
+    #wrap{position:fixed; inset:0;}
+    canvas{position:absolute; inset:0; width:100%; height:100%; display:block;}
+    /* UI overlay sample */
+    #hud{position:fixed; left:12px; bottom:12px; z-index:10; display:flex; gap:10px}
+    button{padding:10px 12px;font-size:14px}
+    #toast{position:fixed; left:50%; bottom:80px; transform:translateX(-50%);
+      background:rgba(0,0,0,.7); color:#fff; padding:8px 12px; border-radius:10px;
+      opacity:0; transition:.2s; z-index:20; font-family:system-ui}
+  </style>
 </head>
 <body>
-<div id="wrap">
-  <canvas id="c"></canvas>
-  <canvas id="ui"></canvas>
-</div>
-<button id="gfxBtn">Graphics: High</button>
-<button id="adBtn">Xem QC +100 vàng</button>
-<div id="toast"></div>
+  <div id="wrap">
+    <canvas id="c"></canvas>
+    <canvas id="ui"></canvas>
+  </div>
 
-<script type="module" src="game/main.js"></script>
+  <div id="hud">
+    <button id="gfxBtn">Graphics: High</button>
+    <button id="adBtn">Xem QC +100 vàng</button>
+  </div>
+  <div id="toast"></div>
+
+  <!-- QUAN TRỌNG: module để import chạy được -->
+  <script type="module" src="./main.js"></script>
 </body>
 </html>
