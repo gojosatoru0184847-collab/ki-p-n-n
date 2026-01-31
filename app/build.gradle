@@ -4,7 +4,7 @@ android {
  namespace 'com.adr.zombie'
  compileSdk 34
  defaultConfig {
-  applicationId 'com.adr.zombie'
+  applicationId "com.gojosatoru.angerstick5"
   minSdk 21
   targetSdk 34
   versionCode 3
