@@ -1,3 +1,14 @@
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.WindowManager;
+import android.webkit.ConsoleMessage;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;   // <<< DÒNG THIẾU
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+
+import androidx.appcompat.app.AppCompatActivity;
 package com.example.kipnn;
 
 import android.graphics.Color;
